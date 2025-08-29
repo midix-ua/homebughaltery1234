@@ -1,0 +1,183 @@
+<!DOCTYPE html>
+<html lang="uk" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>Список витрат</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background: linear-gradient(to right, #f8f9fa, #e9ecef);
+            margin: 0;
+        }
+
+        header {
+            background-color: #4CAF50;
+            color: white;
+            padding: 1rem;
+            text-align: center;
+        }
+
+        nav {
+            background-color: #333;
+            padding: 0.5rem;
+            text-align: center;
+        }
+
+        nav a {
+            color: white;
+            margin: 0 15px;
+            text-decoration: none;
+            font-weight: bold;
+        }
+
+        .container {
+            max-width: 1000px;
+            margin: 2rem auto;
+            background-color: white;
+            padding: 2rem;
+            border-radius: 10px;
+            box-shadow: 0 0 10px rgba(0,0,0,0.1);
+        }
+
+        h2 {
+            text-align: center;
+            font-size: 24px;
+            margin-bottom: 1.5rem;
+        }
+
+        .add-button {
+            display: inline-block;
+            background-color: #007bff;
+            color: white;
+            padding: 0.6rem 1rem;
+            border-radius: 6px;
+            text-decoration: none;
+            margin-bottom: 1rem;
+        }
+
+        .add-button:hover {
+            background-color: #0069d9;
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 1rem;
+        }
+
+        th, td {
+            padding: 0.75rem;
+            border: 1px solid #ccc;
+            text-align: left;
+        }
+
+        th {
+            background-color: #f1f1f1;
+        }
+
+        tr:hover {
+            background-color: #f9f9f9;
+        }
+
+        .chart-container {
+            width: 70%;
+            margin: 2rem auto;
+        }
+    </style>
+    <!-- Підключаємо Chart.js -->
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+</head>
+<body>
+
+<header>
+    <h1>Щомісячні витрати</h1>
+</header>
+
+<nav>
+    <a href="/incomeList">Доходи</a>
+    <a href="/spendingList">Витрати</a>
+    <a href="/creditList">Кредити</a>
+    <a href="/cumulationList">Накопичення</a>
+    <a href="/totalMoneyInfo">Загальні кошти</a>
+    <a href="/addIncome">Додати Дохід</a>
+    <a href="/addSpending">Додати Витрату</a>
+    <a href="/getCredit">Узяти Кредит</a>
+    <a href="/startCumulatiom">Додати Накопичення</a>
+    <a href="/account-details">Інформація про аккаунт</a>
+    <form th:action="@{/logout}" method="post" style="display:inline;">
+        <input type="hidden" th:name="${_csrf.parameterName}" th:value="${_csrf.token}" />
+        <button type="submit" class="btn btn-danger">Вийти</button>
+    </form>
+</nav>
+
+<div class="container">
+    <h2>Список витрат</h2>
+
+    <a href="/addSpending" class="add-button">➕ Додати витрати</a>
+
+    <table>
+        <thead>
+        <tr>
+            <th>ID</th>
+            <th>Користувач</th>
+            <th>Витрати (₴)</th>
+            <th>Категорія</th> <!-- новий стовпчик -->
+            <th>Дата</th>
+            <th>Видалити</th>
+        </tr>
+        </thead>
+        <tbody>
+        <tr th:each="spending : ${spendings}">
+            <td th:text="${spending.id}"></td>
+            <td th:text="${spending.account.name}"></td>
+            <td th:text="${spending.monthly_spending} + ' ₴'"></td>
+            <td th:text="${spending.category}"></td> <!-- відображення категорії -->
+            <td th:text="${spending.date}"></td>
+            <td>
+                <form th:action="@{'/spendingList/delete/' + ${spending.id}}" method="post" style="display:inline;">
+                    <input type="hidden" th:name="${_csrf.parameterName}" th:value="${_csrf.token}" />
+                    <button type="submit" class="button delete" style="background-color:#f44336;">Видалити</button>
+                </form>
+            </td>
+        </tr>
+        </tbody>
+    </table>
+
+    <!-- Діаграма -->
+    <div class="chart-container">
+        <canvas id="spendingChart"></canvas>
+    </div>
+</div>
+
+<script th:inline="javascript">
+    /* Дані для діаграми вже підготовлені в контролері */
+    const categoryTotals = /*[[${categoryTotals}]]*/ {};
+
+    const labels = Object.keys(categoryTotals);
+    const data = Object.values(categoryTotals);
+
+    const ctx = document.getElementById('spendingChart').getContext('2d');
+    new Chart(ctx, {
+        type: 'pie',
+        data: {
+            labels: labels,
+            datasets: [{
+                label: 'Витрати по категоріях',
+                data: data,
+                backgroundColor: [
+                    'rgba(255, 99, 132, 0.6)',
+                    'rgba(54, 162, 235, 0.6)',
+                    'rgba(255, 206, 86, 0.6)',
+                    'rgba(75, 192, 192, 0.6)',
+                    'rgba(153, 102, 255, 0.6)',
+                    'rgba(255, 159, 64, 0.6)'
+                ],
+                borderWidth: 1
+            }]
+        }
+    });
+</script>
+
+
+</body>
+</html>

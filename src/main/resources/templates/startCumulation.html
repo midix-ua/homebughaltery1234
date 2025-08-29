@@ -1,0 +1,145 @@
+<!DOCTYPE html>
+<html lang="uk" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>Додати накопичення</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background: linear-gradient(to right, #f8f9fa, #e9ecef);
+            margin: 0;
+        }
+
+        header {
+            background-color: #4CAF50;
+            color: white;
+            padding: 1rem;
+            text-align: center;
+        }
+
+        nav {
+            background-color: #333;
+            padding: 0.5rem;
+            text-align: center;
+        }
+
+        nav a {
+            color: white;
+            margin: 0 15px;
+            text-decoration: none;
+            font-weight: bold;
+        }
+
+        .container {
+            max-width: 500px;
+            margin: 3rem auto;
+            background-color: white;
+            padding: 2rem;
+            border-radius: 10px;
+            box-shadow: 0 0 10px rgba(0,0,0,0.1);
+        }
+
+        h2 {
+            text-align: center;
+            margin-bottom: 1.5rem;
+            font-size: 24px;
+        }
+
+        .form-group {
+            margin-bottom: 1rem;
+        }
+
+        label {
+            font-weight: bold;
+            display: block;
+            margin-bottom: 0.4rem;
+        }
+
+        input[type="text"],
+        input[type="number"],
+        select {
+            width: 100%;
+            padding: 0.6rem;
+            border: 1px solid #ccc;
+            border-radius: 6px;
+        }
+
+        .btn-submit {
+            width: 100%;
+            padding: 0.75rem;
+            background-color: #007bff;
+            color: white;
+            border: none;
+            border-radius: 6px;
+            font-size: 1rem;
+            cursor: pointer;
+        }
+
+        .btn-submit:hover {
+            background-color: #0069d9;
+        }
+
+        .back-link {
+            display: inline-block;
+            margin-top: 1rem;
+            color: #555;
+            text-decoration: none;
+        }
+
+        .back-link:hover {
+            text-decoration: underline;
+        }
+    </style>
+</head>
+<body>
+
+<header>
+    <h1>Додати накопичення</h1>
+</header>
+
+<nav>
+    <a href="/incomeList">Доходи</a>
+    <a href="/spendingList">Витрати</a>
+    <a href="/creditList">Кредити</a>
+    <a href="/cumulationList">Накопичення</a>
+    <a href="/totalMoneyInfo">Загальні кошти</a>
+    <a href="/addIncome">Додати Дохід</a>
+    <a href="/addSpending">Додати Витрату</a>
+    <a href="/getCredit">Узяти Кредит</a>
+    <a href="/startCumulatiom">Додати Накопичення</a>
+    <a href="/account-details">Інформація про аккаунт</a>
+    <form th:action="@{/logout}" method="post" style="display:inline;">
+        <input type="hidden" th:name="${_csrf.parameterName}" th:value="${_csrf.token}" />
+        <button type="submit" class="btn btn-danger">Вийти</button>
+    </form>
+</nav>
+
+<div class="container">
+    <h2>Нове накопичення</h2>
+
+    <form th:action="@{/startCumulation}" method="post">
+        <input type="hidden" th:name="${_csrf.parameterName}" th:value="${_csrf.token}" />
+
+        <div class="form-group">
+            <label for="description">Опис:</label>
+            <input type="text" name="description" id="description" required>
+        </div>
+
+        <div class="form-group">
+            <label for="summ">Сума:</label>
+            <input type="number" name="summ" id="summ" required>
+        </div>
+
+        <div class="form-group">
+            <label for="accountId">Користувач (ID):</label>
+            <input type="number" name="accountId" id="accountId" required>
+        </div>
+
+        <button type="submit" class="btn-submit">Зберегти</button>
+    </form>
+
+    <a href="/cumulationList" class="back-link">← Назад до списку</a>
+</div>
+
+</body>
+</html>
